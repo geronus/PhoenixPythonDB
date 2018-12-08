@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Phoenix Database</title>
+  <meta name="description" content="Phoenix Guild Database">
+  <meta name="author" content="Phoenix Guild">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="Skeleton-2.0.4/css/normalize.css">
+  <link rel="stylesheet" href="Skeleton-2.0.4/css/skeleton.css">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="Skeleton-2.0.4/images/favicon.png">
+
+</head>
+<body>
+
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <div class="container">
+    <p>
+      <h1>Welcome to Phoenix, Scum</h1>
+      <h5>Your Meager Contributions Detailed Below</h5>
+    </p>
+  </div>
+  <div class="container">
+    <table class="u-full-width">
+      <thead>
+        <th>Name</th>
+        <th>XP</th>
+        <th>Money</th>
+        <th>Jade</th>
+        <th>Gems</th>
+        <th>Food</th>
+        <th>Iron</th>
+        <th>Stone</th>
+        <th>Lumber</th>
+        <th>Rank</th>
+        <th>GDP</th>
+        <th>GDP Spent</th>
+        <th>Weekly GDP</th>
+        <th>RP Gained</th>
+        <th>Double</th>
+      </thead>
+      {% for member in data.members %}
+        <tr>
+          <td>{{ member.username }}</td>
+          <td>{{ member.donations['exp_donated'] }}</td>
+          <td>{{ member.donations['money'] }}</td>
+          <td>{{ member.donations['jade'] }}</td>
+          <td>{{ member.donations['gems'] }}</td>
+          <td>{{ member.donations['food'] }}</td>
+          <td>{{ member.donations['iron'] }}</td>
+          <td>{{ member.donations['stone'] }}</td>
+          <td>{{ member.donations['lumber'] }}</td>
+          <td></td>
+          <td>{{ member.gdp['dp_donated'] }}</td>
+          <td>{{ member.gdp['dp_spent'] }}</td>
+          <td>{{ member.gdp['weekly_dp'] }}</td>
+          <td>{{ member.rp['donated'] }}</td>
+          <td>{{ member.donations['double'] }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+</html>

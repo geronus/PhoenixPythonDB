@@ -1,0 +1,23 @@
+runtime: python27
+api_version: 1
+threadsafe: true
+
+# [START handlers]
+handlers:
+- url: /Skeleton-2.0.4
+  static_dir: html/Skeleton-2.0.4
+
+- url: /.*
+  script: gtable.app
+# [END handlers]
+
+- url: /gtable
+  script: gtable.app
+
+# [START libraries]
+libraries:
+- name: webapp2
+  version: latest
+- name: jinja2
+  version: latest
+# [END libraries]
