@@ -5,6 +5,7 @@ import os
 import urllib
 import json
 import hashlib
+import Utilities
 
 from google.appengine.api import users
 from google.appengine.api import urlfetch
@@ -38,11 +39,12 @@ class GuildTable(webapp2.RequestHandler):
     	#Do stuff with the database HERE
 
     	#Normalize values
-    	
+    	for member in result['members']:
+    		member['donations']['money'] = Utilities.money_external(member['donations']['money'])
 
     	#Write return
         template = JINJA_ENVIRONMENT.get_template('gtable.html')
-        self.response.write(template.render(urlstring=url, data=result))
+        self.response.write(template.render(data=result))
 
 # [END guild_table]
 
