@@ -55,38 +55,22 @@
         <table class="u-full-width">
           <thead>
             <th>Name</th>
-            <th>XP</th>
-            <th>Money</th>
-            <th>Jade</th>
-            <th>Gems</th>
-            <th>Food</th>
-            <th>Iron</th>
-            <th>Stone</th>
-            <th>Lumber</th>
-            <th>Rank</th>
-            <th>GDP</th>
-            <th>GDP Spent</th>
-            <th>Weekly GDP</th>
-            <th>RP Gained</th>
-            <th>Double</th>
+            <th>Level</th>
+            <th>Quests</th>
+            <th>Kills</th>
+            <th>Base Stats</th>
+            <th>Buffed Stats</th>
+            <th>Personal DP</th>
           </thead>
           {% for member in data.members %}
             <tr>
               <td><strong>{{ member.username }}</strong></td>
-              <td>{{ member.donations['exp_donated'] }}</td>
-              <td>{{ member.donations['money'] }}</td>
-              <td>{{ member.donations['jade'] }}</td>
-              <td>{{ member.donations['gems'] }}</td>
-              <td>{{ member.donations['food'] }}</td>
-              <td>{{ member.donations['iron'] }}</td>
-              <td>{{ member.donations['stone'] }}</td>
-              <td>{{ member.donations['lumber'] }}</td>
               <td></td>
-              <td>{{ member.gdp['dp_donated'] }}</td>
-              <td>{{ member.gdp['dp_spent'] }}</td>
-              <td>{{ member.gdp['weekly_dp'] }}</td>
-              <td>{{ member.rp['donated'] }}</td>
-              <td>{{ member.donations['double'] }}</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
             </tr>
           {% endfor %}
         </table>

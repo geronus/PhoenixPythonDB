@@ -9,10 +9,13 @@ handlers:
 
 - url: /.*
   script: gtable.app
-# [END handlers]
 
 - url: /gtable
   script: gtable.app
+
+- url: /stats
+  script: stats.app
+# [END handlers]
 
 # [START libraries]
 libraries:
