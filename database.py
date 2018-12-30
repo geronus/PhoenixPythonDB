@@ -7,7 +7,7 @@ from google.appengine.ext import ndb
 
 # [END imports]
 
-class Member(ndb.model):
+class Member(ndb.Model):
 
 	username = ndb.StringProperty()
 	active = ndb.BooleanProperty()
@@ -22,22 +22,22 @@ class Member(ndb.model):
 	buffed_stats = ndb.IntegerProperty()
 	dp = ndb.IntegerProperty()
 
-	#Jade Skills
+	#Jade Skills - Computed properties commented out for now
 	chc = ndb.IntegerProperty()
-	chc_ext = ndb.ComputedProperty(lambda self: str(float(self.chc) / 100) + '%')
+	#chc_ext = ndb.ComputedProperty(lambda self: str(float(self.chc) / 100) + '%')
 	chd = ndb.IntegerProperty()
-	chd_ext = ndb.ComputedProperty(lambda self: str(float(self.chd) / 100) + '%')
+	#chd_ext = ndb.ComputedProperty(lambda self: str(float(self.chd) / 100) + '%')
 	heroism = ndb.IntegerProperty()
-	heroism_ext = ndb.ComputedProperty(lambda self: str(float(self.heroism) / 40) + '%')
+	#heroism_ext = ndb.ComputedProperty(lambda self: str(float(self.heroism) / 40) + '%')
 	leadership = ndb.IntegerProperty()
-	leadership_ext = ndb.ComputedProperty(lambda self: str(self.leadership) + '%')
+	#leadership_ext = ndb.ComputedProperty(lambda self: str(self.leadership) + '%')
 	archaeology = ndb.IntegerProperty()
-	archaeology_ext = ndb.ComputedProperty(lambda self: str(self.archaeology) + '%')
+	#archaeology_ext = ndb.ComputedProperty(lambda self: str(self.archaeology) + '%')
 	jc = ndb.IntegerProperty()
-	jc_ext = ndb.ComputedProperty(str(self.jc) + '%')
+	#jc_ext = ndb.ComputedProperty(lambda self: str(self.jc) + '%')
 	serendipity = ndb.StringProperty()
 	epeen = ndb.IntegerProperty()
-	epeen_ext = ndb.ComputedProperty(lambda self: str(float(self.epeen) / 100) + ' inches')
+	#epeen_ext = ndb.ComputedProperty(lambda self: str(float(self.epeen) / 100) + ' inches')
 
 	#Equipment
 	w1 = ndb.IntegerProperty()
