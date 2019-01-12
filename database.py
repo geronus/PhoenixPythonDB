@@ -78,12 +78,3 @@ class Member(ndb.Model):
 	gdp_prev = ndb.IntegerProperty()
 	gdp_spent_prev = ndb.IntegerProperty()
 	rp = ndb.IntegerProperty()
-
-def try_key(member_id):
-	try:
-		candidate_key = ndb.Key(member_id)
-	except:
-		return None
-
-	return candidate_key
-

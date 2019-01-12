@@ -49,33 +49,68 @@ class GuildTable(webapp2.RequestHandler):
 
     	#Do stuff with the database HERE
         for member in result['members']:
+            #Attempt to fetch this member from the DB
             candidate_key = try_key(member['id'])
 
             #If member not found, create a new one
             if candidate_key == None:
                 candidate_key = Member(id=member['id'],
                                        username=member['username'],
+                                       rank="0",
+                                       active=True,
                                        level=int(member['level']),
                                        kills=int(member['kills']['kills']),
+                                       quests=0,
+                                       base_stats=0,
+                                       buffed_stats=0,
+                                       dp=0,
                                        xp=int(member['donations']['exp_donated']),
+                                       xp_prev=0,
                                        food=int(member['donations']['food']),
+                                       food_prev=0,
                                        stone=int(member['donations']['stone']),
+                                       stone_prev=0,
                                        iron=int(member['donations']['iron']),
+                                       iron_prev=0,
                                        lumber=int(member['donations']['lumber']),
+                                       lumber_prev=0,
                                        gems=int(member['donations']['gems']),
+                                       gems_prev=0,
                                        money=int(member['donations']['money']),
+                                       money_prev=0,
                                        jade=int(member['donations']['jade']),
+                                       jade_prev=0,
                                        double=int(member['donations']['double']),
                                        gdp=int(member['gdp']['dp']),
+                                       gdp_prev=0,
                                        gdp_spent=int(member['gdp']['dp_spent']),
+                                       gdp_spent_prev=0,
                                        weekly_gdp=int(member['gdp']['weekly_dp']),
                                        last_weekly_gdp=int(member['gdp']['last_weekly_dp']),
-                                       rp=int(member['rp']['donated']))
+                                       rp=int(member['rp']['donated']),
+                                       chc=0,
+                                       chd=0,
+                                       heroism=0,
+                                       leadership=0,
+                                       archaeology=0,
+                                       jc=0,
+                                       serendipity="",
+                                       epeen=0,
+                                       w1=0,
+                                       w2=0,
+                                       a1=0,
+                                       a2=0,
+                                       a3=0,
+                                       a4=0,
+                                       a5=0,
+                                       a6=0,
+                                       a7=0)
 
-            #Otherwise, retrieve and update the existing entry
+            #Otherwise, update the existing entry
             else:
                 entry = candidate_key.get()
                 entry.username = member['username']
+                entry.active = True
                 entry.level = int(member['level'])
                 entry.kills = int(member['kills']['kills'])
                 enrey.xp = int(member['donations']['exp_donated'])
@@ -93,7 +128,7 @@ class GuildTable(webapp2.RequestHandler):
                 entry.last_weekly_gdp = int(member['gdp']['last_weekly_dp'])
                 entry.rp = int(member['rp']['donated'])
 
-            #Update the database entry
+            #Update the database
             candidate_key.put()
 
     	#Normalize values
@@ -109,5 +144,6 @@ class GuildTable(webapp2.RequestHandler):
 # [START app]
 app = webapp2.WSGIApplication([
     ('/', GuildTable),
+    ('/gtable', GuildTable)
 ], debug=True)
 # [END app]

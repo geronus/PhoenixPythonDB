@@ -7,14 +7,14 @@ handlers:
 - url: /Skeleton-2.0.4
   static_dir: html/Skeleton-2.0.4
 
-- url: /.*
-  script: gtable.app
-
 - url: /gtable
   script: gtable.app
 
 - url: /stats
   script: stats.app
+
+- url: /.*
+  script: gtable.app  
 # [END handlers]
 
 # [START libraries]

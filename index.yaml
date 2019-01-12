@@ -1,0 +1,7 @@
+indexes:
+
+- kind: Member
+  properties:
+  - name: active
+  - name: username
+    direction: asc

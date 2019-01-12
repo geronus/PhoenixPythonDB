@@ -59,18 +59,16 @@
             <th>Quests</th>
             <th>Kills</th>
             <th>Base Stats</th>
-            <th>Buffed Stats</th>
             <th>Personal DP</th>
           </thead>
-          {% for member in data.members %}
+          {% for member in data %}
             <tr>
-              <td><strong>{{ member.username }}</strong></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
+              <td><strong>{{ member.name }}</strong></td>
+              <td>{{ member.level }}</td>
+              <td>{{ member.quests_complete }}</td>
+              <td>{{ member.kills }}</td>
+              <td>{{ member.base_stats }}</td>
+              <td>{{ member.earned_dp }}</td>
             </tr>
           {% endfor %}
         </table>
