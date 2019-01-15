@@ -78,3 +78,22 @@ class Member(ndb.Model):
 	gdp_prev = ndb.IntegerProperty()
 	gdp_spent_prev = ndb.IntegerProperty()
 	rp = ndb.IntegerProperty()
+	
+	#Token Boosts
+	#if renamed, also rename the dictionary entries in the 'tokenBoostParser.py' file
+	goldTB = ndb.IntegerProperty()
+	xpTB = ndb.IntegerProperty()
+	statTB = ndb.IntegerProperty()
+	questTB = ndb.IntegerProperty()
+	dropTB = ndb.IntegerProperty()
+	healthTB = ndb.IntegerProperty()
+	attackTB = ndb.IntegerProperty()
+	defenseTB = ndb.IntegerProperty()
+	accuracyTB = ndb.IntegerProperty()
+	evasionTB = ndb.IntegerProperty()
+	joajTB = ndb.IntegerProperty()
+	dmTB = ndb.IntegerProperty()
+	taxiTB = ndb.IntegerProperty()
+	autosTB = ndb.IntegerProperty()
+	jewelsTB = ndb.IntegerProperty()
+	tsTB = ndb.IntegerProperty()
