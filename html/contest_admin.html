@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Phoenix Database</title>
+  <meta name="description" content="Phoenix Guild Database">
+  <meta name="author" content="Phoenix Guild">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="Skeleton-2.0.4/css/normalize.css">
+  <link rel="stylesheet" href="Skeleton-2.0.4/css/skeleton.css">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="Skeleton-2.0.4/images/favicon.png">
+
+</head>
+<body>
+
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <div class="container">
+    <h2>New Contest</h2>
+    {% if info %}
+    <div>
+      <h5>{{ info }}</h5>
+    </div>
+    {% endif %}
+    <form action="https://phoenixdb-222701.appspot.com/contest/admin/submit_contest" method="post">
+      <div>
+        <label>Contest Name</label>
+        <input type="text" placeholder="Enter name" name="contestname">
+        <label>Start Date</label>
+        <input type="date" placeholder="dd/mm/yyyy" name="startdate">
+        <label>End Date</label>
+        <input type="date" placeholder="dd/mm/yyyy" name="enddate">
+      </div>
+      <input class="button-primary" type="submit" value="Submit">
+    </form>
+  </div>
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+</html>

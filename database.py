@@ -78,3 +78,22 @@ class Member(ndb.Model):
 	gdp_prev = ndb.IntegerProperty()
 	gdp_spent_prev = ndb.IntegerProperty()
 	rp = ndb.IntegerProperty()
+
+class ContestScore(ndb.Model):
+
+	member_id = ndb.StringProperty()
+	member_name = ndb.StringProperty()
+	start_gdp = ndb.IntegerProperty()
+	current_gdp = ndb.IntegerProperty()
+	score = ndb.ComputedProperty(lambda self: self.current_gdp - self.start_gdp)
+
+
+class Contest(ndb.Model):
+
+	name = ndb.StringProperty()
+	start = ndb.DateProperty()
+	end = ndb.DateProperty()
+	scores = ndb.StructuredProperty(ContestScore, repeated=True)
+
+
+
