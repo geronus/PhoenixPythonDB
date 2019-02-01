@@ -1,0 +1,6 @@
+cron:
+
+- description: "Daily Maintenance Job"
+  url: /maintenance
+  schedule: every day 00:00
+  timezone: Europe/London

@@ -5,3 +5,14 @@ indexes:
   - name: active
   - name: username
     direction: asc
+
+- kind: Contest
+  properties:
+  - name: end
+  - name: start
+    direction: asc 
+
+- kind: Contest
+  properties:
+  - name: active
+  - name: end

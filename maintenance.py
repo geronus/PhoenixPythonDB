@@ -6,24 +6,20 @@ import urllib
 import json
 import hashlib
 import Utilities
+import datetime
 import logging
 
 from google.appengine.api import users
 from google.appengine.api import urlfetch
 from google.appengine.ext import ndb
 from database import Member
+from database import Contest
+from database import ContestScore
 
-import jinja2
 import webapp2
-
-JINJA_ENVIRONMENT = jinja2.Environment(
-    loader=jinja2.FileSystemLoader('./html/'),
-    extensions=['jinja2.ext.autoescape'],
-    autoescape=True)
 
 GUILD_SECRET = '1596210'
 # [END imports]
-
 
 
 def try_key(member_id):
@@ -36,26 +32,32 @@ def try_key(member_id):
     return candidate_key
 
 # [START guild_table]
-class GuildTable(webapp2.RequestHandler):
+class DailyMaintenance(webapp2.RequestHandler):
 
     def get(self):
-    	#Form URL
-    	url = 'https://lyrania.co.uk/api/guilds/member_list.php?'
-    	params = {'api_code': GUILD_SECRET}
-    	encoded_params = urllib.urlencode(params)
-    	url = url + encoded_params
+        logging.info("Starting maintenance job...")
 
-    	#Fetch request and format response
-    	response= urlfetch.fetch(url=url, validate_certificate=True)
-    	result = json.loads(response.content)
+        #Form URL
+        url = 'https://lyrania.co.uk/api/guilds/member_list.php?'
+        params = {'api_code': GUILD_SECRET}
+        encoded_params = urllib.urlencode(params)
+        url = url + encoded_params
 
-    	#Do stuff with the database HERE
+        #Fetch request and format response
+        response= urlfetch.fetch(url=url, validate_certificate=True)
+        result = json.loads(response.content)
+        contest_additions = []
+
+        #[START UPDATE GUILD CONTRIBUTIONS]
+
         for member in result['members']:
             #Attempt to fetch this member from the DB
             candidate_key = try_key(member['id'])
 
-            #If member not found, create a new one
+            #If member not found, create a new one and set aside for addition to ongoing contests
             if candidate_key == None:
+                logging.info("New member detected: " + member['username'])
+
                 infant_member = Member(id=member['id'],
                                        username=member['username'],
                                        rank="0",
@@ -108,8 +110,9 @@ class GuildTable(webapp2.RequestHandler):
                                        a6=0,
                                        a7=0)
                 
-                #Update the database
                 infant_member.put()
+                new_member = [member['id']]
+                contest_additions = contest_additions + new_member
 
             #Otherwise, update the existing entry
             else:
@@ -136,19 +139,94 @@ class GuildTable(webapp2.RequestHandler):
                 #Update the database
                 entry.put()
 
-    	#Normalize values
-    	for member in result['members']:
-    		member['donations']['money'] = Utilities.money_external(member['donations']['money'])
+        #[END UPDATE GUILD CONTRIBUTIONS]
+        #[START UPDATE STATS]
 
-    	#Write return
-        template = JINJA_ENVIRONMENT.get_template('gtable.html')
-        self.response.write(template.render(data=result))
+        root_url = 'https://lyrania.co.uk/api/accounts/public_profile.php?'
+        memberlist = []
 
-# [END guild_table]
+        members = Member.query(Member.active == True).order(Member.username)
+
+        for person in members:
+
+            #Form URL
+            params = {'search': str(person.key.id())}
+            encoded_params = urllib.urlencode(params)
+            url = root_url + encoded_params
+
+            #Fetch request and format response
+            response = urlfetch.fetch(url=url, validate_certificate=True)
+            result = json.loads(response.content)
+            list_addition = [result]
+            memberlist = memberlist + list_addition
+
+            #Do stuff with the database HERE
+            person.username = result['name']
+            person.level = int(result['level'])
+            person.quests = int(result['quests_complete'])
+            person.base_stats = int(result['base_stats'])
+            person.dp = int(result['earned_dp'])
+
+            if result['guild_name'] != 'Phoenix':
+                logging.info("Member no longer in guild: " + person.username)
+                person.active = False
+                
+            person.put()
+
+        #[END UPDATE STATS]
+        #[START UPDATE CONTESTS]
+
+        #Get today and also yesterday, since contests up until yesterday are relevant
+        today = datetime.date.today()
+        date_adjust = datetime.timedelta(days=-1)
+        yesterday = today + date_adjust
+
+        contest_list = Contest.query(Contest.end >= yesterday)
+
+        if contest_list is None:
+            logging.info("No active contests")
+
+        else:
+            for item in contest_list:
+                logging.info("Updating contest: " + item.name)
+
+                if item.start <= today and item.end > today:
+                    item.active = True
+                else:
+                    item.active = False
+
+                for score in item.scores:
+                    candidate_key = try_key(score.member_id)
+
+                    if candidate_key is not None:
+                        this_member = candidate_key.get()
+                        score.current_gdp = this_member.gdp
+
+                        if item.start == today:
+                            score.start_gdp = this_member.gdp
+
+                    else:
+                        logging.warning("Unable to retrieve member: " + score.member_name)
+
+                for addition in contest_additions:
+                    entity = try_key(addition)
+
+                    if entity is not None:
+                        new_score = ContestScore(member_id=entity.key.id(),
+                                                 member_name=entity.username,
+                                                 start_gdp=entity.gdp,
+                                                 current_gdp=entity.gdp)
+
+                        item.scores = item.score + [new_score]
+
+                    else:
+                        logging.warning("Unable to add contest addition: " + str(addition))
+
+                item.put()
+        #[END Update Contests]
 
 # [START app]
 app = webapp2.WSGIApplication([
-    ('/', GuildTable),
-    ('/gtable', GuildTable)
+    ('/maintenance', DailyMaintenance)
 ], debug=True)
 # [END app]

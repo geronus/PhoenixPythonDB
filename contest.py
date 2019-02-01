@@ -5,11 +5,9 @@ import os
 import urllib
 import json
 import Utilities
-import re
 import datetime
 import logging
 
-from google.appengine.api import users
 from google.appengine.api import urlfetch
 from google.appengine.ext import ndb
 from database import Member
@@ -24,48 +22,105 @@ JINJA_ENVIRONMENT = jinja2.Environment(
     extensions=['jinja2.ext.autoescape'],
     autoescape=True)
 
+GUILD_SECRET = '1596210'
+
 # [END imports]
 
-# [START stats_table]
-class ContestTable(webapp2.RequestHandler):
+# [START contest_table]
+class ContestPublic(webapp2.RequestHandler):
 
     def get(self):
-      
-        root_url = 'https://lyrania.co.uk/api/accounts/public_profile.php?'
-        memberlist = []
 
-        members = Member.query(Member.active == True).order(Member.username)
+        #Execute initial active query and retrieve active contests
+        active = Contest.query(Contest.active == True).order(Contest.end).fetch()
 
-        for member in members:
+        #Form URL for score update
+        url = 'https://lyrania.co.uk/api/guilds/member_list.php?'
+        params = {'api_code': GUILD_SECRET}
+        encoded_params = urllib.urlencode(params)
+        url = url + encoded_params
 
-            #Form URL
-            params = {'search': str(member.key.id())}
-            encoded_params = urllib.urlencode(params)
-            url = root_url + encoded_params
-
-            #Fetch request and format response
-            response = urlfetch.fetch(url=url, validate_certificate=True)
-            result = json.loads(response.content)
-            list_addition = [result]
-            memberlist = memberlist + list_addition
-
-            #Do stuff with the database HERE
-            member.username = result['name']
-            member.level = int(result['level'])
-            member.quests = int(result['quests_complete'])
-            member.base_stats = int(result['base_stats'])
-            member.dp = int(result['earned_dp'])
-
-            if result['guild_name'] != 'Phoenix':
-                member.active = False
+        #Fetch request and format response
+        response= urlfetch.fetch(url=url, validate_certificate=True)
+        result = json.loads(response.content)
             
-            member.put()
+        #Update contest scores
+        #Note to self - find a way to do this that's not roughly O(n^3) if possible...
+        for contest in active:
+
+            for score in contest.scores:
+
+                for person in result['members']:
+
+                    if person['id'] == score.member_id:
+                        score.current_gdp = int(person['gdp']['dp'])
+                        break
+
+            contest.put()
+
+        today = datetime.date.today()
+
+        #Refresh active query to get updated score values
+        active = Contest.query(Contest.active == True).order(Contest.end).fetch()
+
+        #Execute recent query
+        recent = Contest.query(Contest.end < today).order(-Contest.end).fetch(5)
+
+        #Excute upcoming query
+        upcoming = Contest.query(Contest.start > today).order(Contest.start).fetch()
+
+        #If the user clicked on a specific contest name, the contest id will be in the request
+        query = self.request.get('id')
+        
+        if query != '':
+            try:
+                candidate_key = ndb.Key(urlsafe=query)
+            except:
+                candidate_key = None
+                debug.error("Unable to retrieve Contest key from GET request!")
+        else:
+            candidate_key = None
+
+        #If no contest was selected, determine which contest should be the default
+        if candidate_key is not None:
+            current = candidate_key.get()
+        elif active != []:
+            current = active[0]
+        elif recent != []:
+            current = recent[0]
+            active = active + [current]
+        else:
+            current = None
+            current_dict = {}
+            scores = []
+
+        #Format results for the template
+        active_list = []
+
+        for item in active:
+                
+            item_dict = {'id': item.key.urlsafe(),
+                         'name': item.name,
+                         'start': item.start.strftime('%d-%m-%Y'),
+                         'end': item.end.strftime('%d-%m-%Y')}
+
+            active_list = active_list + [item_dict]
+
+        if current is not None:
+
+            scores = current.scores
+
+            current_dict = {'id': current.key.urlsafe(),
+                            'name': current.name,
+                            'start': current.start.strftime('%d-%m-%Y'),
+                            'end': current.end.strftime('%d-%m-%Y')}
 
         #Write return
-        template = JINJA_ENVIRONMENT.get_template('stats.html')
-        self.response.write(template.render(data=memberlist))
+        template = JINJA_ENVIRONMENT.get_template('contest.html')
+        self.response.write(template.render(active_contests=active_list,upcoming_contests=upcoming,current=current_dict,scores=scores))
 
-# [END stats_table]
+# [END contest_table]
+# [START contest_admin]
 
 class ContestAdmin(webapp2.RequestHandler):
 
@@ -93,6 +148,7 @@ class ContestAdmin(webapp2.RequestHandler):
             return result
 
         except:
+            logging.error("RegEx Exception in the Date Parser!")
             return None
 
     #Handle new Contest submission
@@ -124,7 +180,8 @@ class ContestAdmin(webapp2.RequestHandler):
                 score_list = score_list + [new_score]
 
             #Create new Contest
-            new_contest = Contest(name=contest_name,
+            new_contest = Contest(active=False,
+                                  name=contest_name,
                                   start=start_date,
                                   end=end_date,
                                   scores=score_list)
@@ -135,8 +192,11 @@ class ContestAdmin(webapp2.RequestHandler):
             template = JINJA_ENVIRONMENT.get_template('contest_admin.html')
             self.response.write(template.render(info=result))
 
+# [END contest_admin]
+
 # [START app]
 app = webapp2.WSGIApplication([
+    ('/contest', ContestPublic),
     ('/contest/admin', ContestAdmin),
     ('/contest/admin/submit_contest', ContestAdmin)
 ], debug=True)

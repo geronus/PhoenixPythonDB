@@ -90,6 +90,7 @@ class ContestScore(ndb.Model):
 
 class Contest(ndb.Model):
 
+	active = ndb.BooleanProperty()
 	name = ndb.StringProperty()
 	start = ndb.DateProperty()
 	end = ndb.DateProperty()
