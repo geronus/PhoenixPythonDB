@@ -46,6 +46,18 @@
         <a class="button" href={{ ["https://phoenixdb-222701.appspot.com/contest?id=", item['id']]|join }}>{{ item['name'] }}</a></br>
         {% endif %}
         {% endfor %}
+        <p><h5>Recent Contests</h5></p>
+        {% if recent_contests %}
+        <ol>
+          {% for item in recent_contests %}
+          {% if item == current %}
+          <a class="button button-primary" href={{ ["https://phoenixdb-222701.appspot.com/contest?id=", current['id']]|join }}>{{ current['name'] }}</a></br>
+          {% else %}
+          <a class="button" href={{ ["https://phoenixdb-222701.appspot.com/contest?id=", item['id']]|join }}>{{ item['name'] }}</a></br>
+          {% endif %}
+          {% endfor %}
+        </ol>
+        {% endif %}
         <p><h5>Upcoming Contests</h5></p>
         {% if upcoming_contests %}
         <ol>
@@ -60,7 +72,8 @@
       <div class="nine columns">
         {% if current %}
         <h3>{{ current.name }}</h3>
-        <h5>{{ [current.start, " - ", current.end]|join }}</h5>
+        <h5>{{ [current.start, " to ", current.end]|join }}</h5>
+        <h5>{{ ["Total GDP: ", scores|sum(attribute='score')]|join }}</h5>
         <table class="u-full-width">
           <thead>
             <th>Rank</th>

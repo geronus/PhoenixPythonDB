@@ -53,9 +53,10 @@ class GuildTable(webapp2.RequestHandler):
         for member in result['members']:
             #Attempt to fetch this member from the DB
             candidate_key = try_key(member['id'])
+            entry = candidate_key.get()
 
             #If member not found, create a new one
-            if candidate_key == None:
+            if entry is None:
                 infant_member = Member(id=member['id'],
                                        username=member['username'],
                                        rank="0",
@@ -90,6 +91,7 @@ class GuildTable(webapp2.RequestHandler):
                                        weekly_gdp=int(member['gdp']['weekly_dp']),
                                        last_weekly_gdp=int(member['gdp']['last_weekly_dp']),
                                        rp=int(member['rp']['donated']),
+                                       rp_prev=0,
                                        chc=0,
                                        chd=0,
                                        heroism=0,
@@ -113,7 +115,6 @@ class GuildTable(webapp2.RequestHandler):
 
             #Otherwise, update the existing entry
             else:
-                entry = candidate_key.get()
                 entry.username = member['username']
                 entry.active = True
                 entry.level = int(member['level'])

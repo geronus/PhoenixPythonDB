@@ -53,9 +53,10 @@ class DailyMaintenance(webapp2.RequestHandler):
         for member in result['members']:
             #Attempt to fetch this member from the DB
             candidate_key = try_key(member['id'])
+            entry = candidate_key.get()
 
             #If member not found, create a new one and set aside for addition to ongoing contests
-            if candidate_key == None:
+            if entry is None:
                 logging.info("New member detected: " + member['username'])
 
                 infant_member = Member(id=member['id'],
@@ -92,6 +93,7 @@ class DailyMaintenance(webapp2.RequestHandler):
                                        weekly_gdp=int(member['gdp']['weekly_dp']),
                                        last_weekly_gdp=int(member['gdp']['last_weekly_dp']),
                                        rp=int(member['rp']['donated']),
+                                       rp_prev=0,
                                        chc=0,
                                        chd=0,
                                        heroism=0,
@@ -116,7 +118,6 @@ class DailyMaintenance(webapp2.RequestHandler):
 
             #Otherwise, update the existing entry
             else:
-                entry = candidate_key.get()
                 entry.username = member['username']
                 entry.active = True
                 entry.level = int(member['level'])
@@ -170,6 +171,17 @@ class DailyMaintenance(webapp2.RequestHandler):
             if result['guild_name'] != 'Phoenix':
                 logging.info("Member no longer in guild: " + person.username)
                 person.active = False
+                person.xp_prev = person.xp
+                person.money_prev = person.money
+                person.jade_prev = person.jade
+                person.gems_prev = person.gems
+                person.food_prev = person.food
+                person.iron_prev = person.iron
+                person.stone_prev = person.stone
+                person.lumber_prev = person.lumber
+                person.gdp_prev = person.gdp
+                person.gdp_spent_prev = person.gdp_spent
+                person.rp_prev = person.rp
                 
             person.put()
 
@@ -190,7 +202,7 @@ class DailyMaintenance(webapp2.RequestHandler):
             for item in contest_list:
                 logging.info("Updating contest: " + item.name)
 
-                if item.start <= today and item.end > today:
+                if item.start <= today and item.end >= today:
                     item.active = True
                 else:
                     item.active = False
@@ -201,6 +213,7 @@ class DailyMaintenance(webapp2.RequestHandler):
                     if candidate_key is not None:
                         this_member = candidate_key.get()
                         score.current_gdp = this_member.gdp
+                        score.member_name = this_member.username
 
                         if item.start == today:
                             score.start_gdp = this_member.gdp

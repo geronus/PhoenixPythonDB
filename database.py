@@ -77,7 +77,7 @@ class Member(ndb.Model):
 	lumber_prev = ndb.IntegerProperty()
 	gdp_prev = ndb.IntegerProperty()
 	gdp_spent_prev = ndb.IntegerProperty()
-	rp = ndb.IntegerProperty()
+	rp_prev = ndb.IntegerProperty()
 
 class ContestScore(ndb.Model):
 

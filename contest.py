@@ -54,6 +54,7 @@ class ContestPublic(webapp2.RequestHandler):
 
                     if person['id'] == score.member_id:
                         score.current_gdp = int(person['gdp']['dp'])
+                        score.member_name = person['username']
                         break
 
             contest.put()
@@ -88,7 +89,6 @@ class ContestPublic(webapp2.RequestHandler):
             current = active[0]
         elif recent != []:
             current = recent[0]
-            active = active + [current]
         else:
             current = None
             current_dict = {}
@@ -96,6 +96,7 @@ class ContestPublic(webapp2.RequestHandler):
 
         #Format results for the template
         active_list = []
+        recent_list = []
 
         for item in active:
                 
@@ -105,6 +106,15 @@ class ContestPublic(webapp2.RequestHandler):
                          'end': item.end.strftime('%d-%m-%Y')}
 
             active_list = active_list + [item_dict]
+
+        for recent_item in recent:
+
+            recent_item_dict = {'id': recent_item.key.urlsafe(),
+                                'name': recent_item.name,
+                                'start': recent_item.start.strftime('%d-%m-%Y'),
+                                'end': recent_item.end.strftime('%d-%m-%Y')}
+
+            recent_list = recent_list + [recent_item_dict]
 
         if current is not None:
 
@@ -117,7 +127,11 @@ class ContestPublic(webapp2.RequestHandler):
 
         #Write return
         template = JINJA_ENVIRONMENT.get_template('contest.html')
-        self.response.write(template.render(active_contests=active_list,upcoming_contests=upcoming,current=current_dict,scores=scores))
+        self.response.write(template.render(active_contests=active_list,
+                                            upcoming_contests=upcoming,
+                                            recent_contests=recent_list,
+                                            current=current_dict,
+                                            scores=scores))
 
 # [END contest_table]
 # [START contest_admin]
