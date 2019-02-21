@@ -70,6 +70,9 @@
             <th>Weekly GDP</th>
             <th>RP Gained</th>
             <th>Double</th>
+            <th>7 Day Kills</th>
+            <th>14 Day Kills</th>
+            <th>30 Day Kills</th>
           </thead>
           {% for member in data.members|sort(attribute='username') %}
             <tr>
@@ -88,6 +91,19 @@
               <td>{{ member.gdp['weekly_dp'] }}</td>
               <td>{{ member.rp['donated'] }}</td>
               <td>{{ member.donations['double'] }}</td>
+              {% if member.kills7 %}
+              {% if member.kills7 < 15000 %}
+              <td class="u-red">{{ member.kills7 }}</td>
+              {% else %}
+              <td>{{ member.kills7 }}</td>
+              {% endif %}
+              <td>{{ member.kills14 }}</td>
+              <td>{{ member.kills30 }}</td>
+              {% else %}
+              <td></td>
+              <td></td>
+              <td></td>
+              {% endif %}
             </tr>
           {% endfor %}
         </table>

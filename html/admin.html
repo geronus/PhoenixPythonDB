@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>Phoenix Database</title>
+  <meta name="description" content="Phoenix Guild Database">
+  <meta name="author" content="Phoenix Guild">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="Skeleton-2.0.4/css/normalize.css">
+  <link rel="stylesheet" href="Skeleton-2.0.4/css/skeleton.css">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="Skeleton-2.0.4/images/favicon.png">
+
+</head>
+<body>
+
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <div class="container">
+    <h1>Guild Console</h1>
+    <div class="row">
+      <div class="six columns">
+        <h2>Kill Tracker</h2>
+          <table>
+            <thead>
+              <th>Name</th>
+              <th>Last 7</th>
+              <th>Last 14</th>
+              <th>Last 30</th>
+            </thead>
+            <tbody>
+              {% for person in kills %}
+              <tr>
+                <td><strong>{{ person.name }}</strong></td>
+                {% if person.kills7 < 15000 %}
+                <td class="u-red">{{ person.kills7 }}</td>
+                {% else %}
+                <td>{{ person.kills7 }}</td>
+                {% endif %}
+                <td>{{ person.kills14 }}</td>
+                <td>{{ person.kills30 }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+      </div>
+      <div class="six columns">
+        {% if double %}
+        <h2>Double Deficit</h2>
+        <table>
+          <thead>
+            <th>Name</th>
+            <th>Double</th>
+          </thead>
+          <tbody>
+            {% for slacker in double %}
+            <tr>
+              <td><strong>{{ slacker.username }} </strong></td>
+              <td class="u-red">{{ slacker.double }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% endif %}
+        <h2>New Contest</h2>
+        <form action="https://phoenixdb-222701.appspot.com/admin/submit" method="post">
+          <div>
+            <label>Contest Name</label>
+            <input type="text" placeholder="Enter name" name="contestname">
+            <label>Start Date</label>
+            <input type="date" placeholder="dd/mm/yyyy" name="startdate">
+            <label>End Date</label>
+            <input type="date" placeholder="dd/mm/yyyy" name="enddate">
+          </div>
+          <button class="button-primary" type="submit" name="action" value="newcontest">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+</html>

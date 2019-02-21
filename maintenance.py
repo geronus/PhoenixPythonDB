@@ -59,6 +59,13 @@ class DailyMaintenance(webapp2.RequestHandler):
             if entry is None:
                 logging.info("New member detected: " + member['username'])
 
+                kill_tracker = []
+
+                for x in xrange(0,29):
+                    kill_tracker.append(0)
+
+                kill_tracker.append(int(member['kills']['yesterdays_kills']))
+
                 infant_member = Member(id=member['id'],
                                        username=member['username'],
                                        rank="0",
@@ -110,7 +117,8 @@ class DailyMaintenance(webapp2.RequestHandler):
                                        a4=0,
                                        a5=0,
                                        a6=0,
-                                       a7=0)
+                                       a7=0,
+                                       kill_list=kill_tracker)
                 
                 infant_member.put()
                 new_member = [member['id']]
@@ -136,6 +144,21 @@ class DailyMaintenance(webapp2.RequestHandler):
                 entry.weekly_gdp = int(member['gdp']['weekly_dp'])
                 entry.last_weekly_gdp = int(member['gdp']['last_weekly_dp'])
                 entry.rp = int(member['rp']['donated'])
+
+                #Initialize kill_list           
+                if entry.kill_list is None:
+                    kill_tracker = []
+
+                    for x in xrange(0,30):
+                        kill_tracker.append(0)
+
+                else:
+                    kill_tracker = entry.kill_list
+
+                yesterdays_kills = int(member['kills']['kills']) - int(member['kills']['yesterdays_kills'])
+                kill_tracker.append(yesterdays_kills)
+                kill_tracker = kill_tracker[1:]
+                entry.kill_list = kill_tracker
 
                 #Update the database
                 entry.put()
@@ -168,6 +191,7 @@ class DailyMaintenance(webapp2.RequestHandler):
             person.base_stats = int(result['base_stats'])
             person.dp = int(result['earned_dp'])
 
+            #If no longer a member, inactivate and store off previous stats
             if result['guild_name'] != 'Phoenix':
                 logging.info("Member no longer in guild: " + person.username)
                 person.active = False
@@ -209,9 +233,9 @@ class DailyMaintenance(webapp2.RequestHandler):
 
                 for score in item.scores:
                     candidate_key = try_key(score.member_id)
+                    this_member = candidate_key.get()
 
-                    if candidate_key is not None:
-                        this_member = candidate_key.get()
+                    if this_member is not None:
                         score.current_gdp = this_member.gdp
                         score.member_name = this_member.username
 
@@ -222,7 +246,8 @@ class DailyMaintenance(webapp2.RequestHandler):
                         logging.warning("Unable to retrieve member: " + score.member_name)
 
                 for addition in contest_additions:
-                    entity = try_key(addition)
+                    candidate_key = try_key(addition)
+                    entity = candidate_key.get()
 
                     if entity is not None:
                         new_score = ContestScore(member_id=entity.key.id(),
@@ -230,7 +255,7 @@ class DailyMaintenance(webapp2.RequestHandler):
                                                  start_gdp=entity.gdp,
                                                  current_gdp=entity.gdp)
 
-                        item.scores = item.score + [new_score]
+                        item.scores = item.scores + [new_score]
 
                     else:
                         logging.warning("Unable to add contest addition: " + str(addition))

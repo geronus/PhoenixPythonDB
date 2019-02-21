@@ -1,3 +1,4 @@
+<meta http-equiv="refresh" content="2; url=http://example.com/" />
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,6 +13,10 @@
   <!-- Mobile Specific Metas
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Redirect
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta http-equiv="refresh" content="2; url=https://phoenixdb-222701.appspot.com/admin" />
 
   <!-- FONT
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
@@ -31,25 +36,7 @@
 
   <!-- Primary Page Layout
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-  <div class="container">
-    <h2>New Contest</h2>
-    {% if info %}
-    <div>
-      <h5>{{ info }}</h5>
-    </div>
-    {% endif %}
-    <form action="https://phoenixdb-222701.appspot.com/contest/admin/submit_contest" method="post">
-      <div>
-        <label>Contest Name</label>
-        <input type="text" placeholder="Enter name" name="contestname">
-        <label>Start Date</label>
-        <input type="date" placeholder="dd/mm/yyyy" name="startdate">
-        <label>End Date</label>
-        <input type="date" placeholder="dd/mm/yyyy" name="enddate">
-      </div>
-      <input class="button-primary" type="submit" value="Submit">
-    </form>
-  </div>
+  <h3>{{ info }}</h3>
 
 <!-- End Document
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->

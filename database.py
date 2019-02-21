@@ -79,6 +79,9 @@ class Member(ndb.Model):
 	gdp_spent_prev = ndb.IntegerProperty()
 	rp_prev = ndb.IntegerProperty()
 
+	#Kill Tracker
+	kill_list = ndb.PickleProperty()
+
 class ContestScore(ndb.Model):
 
 	member_id = ndb.StringProperty()

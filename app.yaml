@@ -10,6 +10,9 @@ handlers:
 - url: /maintenance
   script: maintenance.app
 
+- url: /admin.*
+  script: admin.app
+
 - url: /gtable
   script: gtable.app
 
@@ -20,7 +23,7 @@ handlers:
   script: contest.app
 
 - url: /.*
-  script: gtable.app  
+  script: gtable.app
 # [END handlers]
 
 # [START libraries]
