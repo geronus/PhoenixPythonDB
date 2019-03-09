@@ -57,38 +57,26 @@
         <table class="u-full-width">
           <thead>
             <th>Name</th>
-            <th>Rank</th>
-            <th>GDP</th>
-            <th>GDP Spent</th>
-            <th>Weekly GDP</th>
-            <th>RP Gained</th>
-            <th>Double</th>
-            <th>7 Day Kills</th>
-            <th>14 Day Kills</th>
-            <th>30 Day Kills</th>
+            <th>XP</th>
+            <th>Money</th>
+            <th>Jade</th>
+            <th>Gems</th>
+            <th>Food</th>
+            <th>Iron</th>
+            <th>Stone</th>
+            <th>Lumber</th>
           </thead>
           {% for member in data.members|sort(case_sensitive=True, attribute='username') %}
             <tr>
               <td><strong>{{ member.username }}</strong></td>
-              <td></td>
-              <td>{{ member.gdp['dp'] }}</td>
-              <td>{{ member.gdp['dp_spent'] }}</td>
-              <td>{{ member.gdp['weekly_dp'] }}</td>
-              <td>{{ member.rp['donated'] }}</td>
-              <td>{{ member.donations['double'] }}</td>
-              {% if member.kills7 %}
-              {% if member.kills7 < 15000 %}
-              <td class="u-red">{{ member.kills7 }}</td>
-              {% else %}
-              <td>{{ member.kills7 }}</td>
-              {% endif %}
-              <td>{{ member.kills14 }}</td>
-              <td>{{ member.kills30 }}</td>
-              {% else %}
-              <td></td>
-              <td></td>
-              <td></td>
-              {% endif %}
+              <td>{{ member.donations['exp_donated'] }}</td>
+              <td>{{ member.donations['money'] }}</td>
+              <td>{{ member.donations['jade'] }}</td>
+              <td>{{ member.donations['gems'] }}</td>
+              <td>{{ member.donations['food'] }}</td>
+              <td>{{ member.donations['iron'] }}</td>
+              <td>{{ member.donations['stone'] }}</td>
+              <td>{{ member.donations['lumber'] }}</td>
             </tr>
           {% endfor %}
         </table>

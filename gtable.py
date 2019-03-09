@@ -49,6 +49,9 @@ class GuildTable(webapp2.RequestHandler):
     	response= urlfetch.fetch(url=url, validate_certificate=True)
     	result = json.loads(response.content)
 
+        #Determine table to display
+        display = self.request.get('display')
+
     	#Do stuff with the database HERE
         for member in result['members']:
             #Attempt to fetch this member from the DB
@@ -81,14 +84,33 @@ class GuildTable(webapp2.RequestHandler):
                 entry.put()
 
                 #Get display values
-                member['kills7'] = sum(entry.kill_list[23:])
-                member['kills14'] = sum(entry.kill_list[16:])
-                member['kills30'] = sum(entry.kill_list)
+                member['kills7'] = format(sum(entry.kill_list[23:]),',')
+                member['kills14'] = format(sum(entry.kill_list[16:]),',')
+                member['kills30'] = format(sum(entry.kill_list),',')
 
+            #Format for display
+            member['level'] = format(int(member['level']),',')
+            member['donations']['exp_donated'] = format(int(member['donations']['exp_donated']),',')
+            member['donations']['food'] = format(int(member['donations']['food']),',')
+            member['donations']['stone'] = format(int(member['donations']['stone']),',')
+            member['donations']['iron'] = format(int(member['donations']['iron']),',')
+            member['donations']['lumber'] = format(int(member['donations']['lumber']),',')
+            member['donations']['gems'] = format(int(member['donations']['gems']),',')
             member['donations']['money'] = Utilities.money_external(member['donations']['money'])
+            member['donations']['jade'] = format(int(member['donations']['jade']),',')
+            member['donations']['double'] = format(int(member['donations']['double']),',')
+            member['gdp']['dp'] = format(int(member['gdp']['dp']),',')
+            member['gdp']['dp_spent'] = format(int(member['gdp']['dp_spent']),',')
+            member['gdp']['weekly_dp'] = format(int(member['gdp']['weekly_dp']),',')
+            member['rp']['donated'] = format(int(member['rp']['donated']),',')
+
 
     	#Write return
-        template = JINJA_ENVIRONMENT.get_template('gtable.html')
+        if display == 'donations':
+            template = JINJA_ENVIRONMENT.get_template('gtable2.html')
+        else:
+            template = JINJA_ENVIRONMENT.get_template('gtable.html')
+
         self.response.write(template.render(data=result))
 
 # [END guild_table]

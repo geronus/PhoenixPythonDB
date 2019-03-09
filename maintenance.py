@@ -64,7 +64,7 @@ class DailyMaintenance(webapp2.RequestHandler):
                 for x in xrange(0,29):
                     kill_tracker.append(0)
 
-                kill_tracker.append(int(member['kills']['yesterdays_kills']))
+                kill_tracker.append(int(member['kills']['kills']) - int(member['kills']['yesterdays_kills']))
 
                 infant_member = Member(id=member['id'],
                                        username=member['username'],
@@ -145,17 +145,11 @@ class DailyMaintenance(webapp2.RequestHandler):
                 entry.last_weekly_gdp = int(member['gdp']['last_weekly_dp'])
                 entry.rp = int(member['rp']['donated'])
 
-                #Initialize kill_list           
-                if entry.kill_list is None:
-                    kill_tracker = []
-
-                    for x in xrange(0,30):
-                        kill_tracker.append(0)
-
-                else:
-                    kill_tracker = entry.kill_list
+                
+                kill_tracker = entry.kill_list
 
                 yesterdays_kills = int(member['kills']['kills']) - int(member['kills']['yesterdays_kills'])
+
                 kill_tracker.append(yesterdays_kills)
                 kill_tracker = kill_tracker[1:]
                 entry.kill_list = kill_tracker
