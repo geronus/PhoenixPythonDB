@@ -8,6 +8,7 @@ import hashlib
 import Utilities
 import datetime
 import logging
+import convertARnumbers
 
 from google.appengine.api import users
 from google.appengine.api import urlfetch
@@ -69,6 +70,9 @@ class DailyMaintenance(webapp2.RequestHandler):
                 infant_member = Member(id=member['id'],
                                        username=member['username'],
                                        rank="0",
+                                       rank_int=0,
+                                       rank_milestone=1000,
+                                       rank_new=False,
                                        active=True,
                                        level=int(member['level']),
                                        kills=int(member['kills']['kills']),
@@ -145,7 +149,7 @@ class DailyMaintenance(webapp2.RequestHandler):
                 entry.last_weekly_gdp = int(member['gdp']['last_weekly_dp'])
                 entry.rp = int(member['rp']['donated'])
 
-                
+                #Update kill tracker
                 kill_tracker = entry.kill_list
 
                 yesterdays_kills = int(member['kills']['kills']) - int(member['kills']['yesterdays_kills'])
@@ -153,6 +157,20 @@ class DailyMaintenance(webapp2.RequestHandler):
                 kill_tracker.append(yesterdays_kills)
                 kill_tracker = kill_tracker[1:]
                 entry.kill_list = kill_tracker
+
+                #Update rank
+                if entry.gdp >= entry.rank_milestone:
+                    entry.rank_new = True
+                    new_rank = 0
+
+                    #Rank corresponds to index of RANKS array in Utilities module
+                    for x in xrange(0, (len(Utilities.RANKS) - 1)):
+                        if entry.gdp >= Utilities.RANKS[x]:
+                            new_rank = x
+
+                    entry.rank_int = new_rank
+                    entry.rank_milestone = Utilities.RANKS[new_rank + 1]
+                    entry.rank = convertARnumbers.converts(new_rank)
 
                 #Update the database
                 entry.put()
@@ -207,7 +225,7 @@ class DailyMaintenance(webapp2.RequestHandler):
         #[START UPDATE CONTESTS]
 
         #Get today and also yesterday, since contests up until yesterday are relevant
-        today = datetime.date.today()
+        today = Utilities.todayUTC()
         date_adjust = datetime.timedelta(days=-1)
         yesterday = today + date_adjust
 

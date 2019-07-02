@@ -59,7 +59,8 @@ class ContestPublic(webapp2.RequestHandler):
 
             contest.put()
 
-        today = datetime.date.today()
+        #The Lyr server runs in London timezone (which has daylight time), but all dates in the store are UTC, which does not.
+        today = Utilities.todayUTC()
 
         #Refresh active query to get updated score values
         active = Contest.query(Contest.active == True).order(Contest.end).fetch()

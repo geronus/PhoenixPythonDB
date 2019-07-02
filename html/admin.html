@@ -60,6 +60,28 @@
           </table>
       </div>
       <div class="six columns">
+        {% if rank_tracker %}
+        <h2>New Ranks</h2>
+        <form action="https://phoenixdb-222701.appspot.com/admin/submit" method="post">
+          <table>
+            <thead>
+              <th>Name</th>
+              <th>GDP</th>
+              <th>Rank</th>
+              <th>Updated</th>
+            </thead>
+            {% for member in rank_tracker %}
+            <tr>
+              <td>{{ member.name }}</td>
+              <td>{{ member.gdp }}</td>
+              <td>{{ member.rank }}</td>
+              <td><input type="checkbox" name="member" value={{ member.id }}></td>
+            </tr>
+            {% endfor %}
+          </table>
+          <button class="button-primary" type="submit" name="action" value="updateranks">Submit</button>
+        </form>
+        {% endif %}
         {% if double %}
         <h2>Double Deficit</h2>
         <table>

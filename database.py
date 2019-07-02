@@ -11,7 +11,13 @@ class Member(ndb.Model):
 
 	username = ndb.StringProperty()
 	active = ndb.BooleanProperty()
+
+	#Rank
+
 	rank = ndb.StringProperty()
+	rank_int = ndb.IntegerProperty()
+	rank_milestone = ndb.IntegerProperty()
+	rank_new = ndb.BooleanProperty()
 
 	#Personal Stats
 
