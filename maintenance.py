@@ -9,6 +9,7 @@ import Utilities
 import datetime
 import logging
 
+
 from google.appengine.api import users
 from google.appengine.api import urlfetch
 from google.appengine.ext import ndb
@@ -207,15 +208,7 @@ class DailyMaintenance(webapp2.RequestHandler):
         #[START UPDATE CONTESTS]
 
         #Get today and also yesterday, since contests up until yesterday are relevant
-        ##today = datetime.date.today() //replaced
-		from datetime import datetime, timedelta 
-		today = datetime.now()
-		if today.strftime("%m %d") <= str("03 31"):timeshift = 0
-		elif today.strftime("%m %d") > str("10 27"):timeshift = 0
-		else: timeshift = 1
-		today = today + timedelta(hours=timeshift)
-		##end change
-		
+        today = Utilities.todayGMT()
         date_adjust = datetime.timedelta(days=-1)
         yesterday = today + date_adjust
 
