@@ -25,11 +25,15 @@
   <!-- Favicon
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <link rel="icon" type="image/png" href="Skeleton-2.0.4/images/favicon.png">
-  
- <!-- Sort script
-  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
- <script src="https://lyr-01.000webhostapp.com/sorttable.js"></script>
 
+  <!-- Sort script
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <script src="https://lyr-01.000webhostapp.com/sorttable.js"></script>
+  <style>
+	#withsymbolsbeforesorting th:not(.sorttable_sorted):not(.sorttable_sorted_reverse):after { 
+    content: " \25B4\25BE" 
+	}
+  </style>
 </head>
 <body>
 
@@ -42,22 +46,13 @@
     </p>
     <div class="row">
       <div class="three columns">
-        <a class="button" href="https://phoenixdb-222701.appspot.com/gtable">Guild Contributions</a></br>
+        <a class="button" href="https://phoenixdb-222701.appspot.com/gtable">Guild Stats</a></br>
+        <a class="button" href="https://phoenixdb-222701.appspot.com/gtable?display=donations">Guild Donations</a></br>
         <a class="button" href="https://phoenixdb-222701.appspot.com/stats">Personal Stats</a></br>
-        <button>Jade Skills</button></br>
-        <button>Equipment Level</button></br>
-        <button>Rankings</button></br>
         <a class="button" href="https://phoenixdb-222701.appspot.com/contest">Contests</a></br>
-        <p><h5>Calculate</h5></p>
-        <button>Equipment Cost</button></br>
-        <button>Jade Upgrade Cost</button></br>
-        <button>TS Info</button></br>
-        <p><h5>Update</h5></p>
-        <button>Equipment</button></br>
-        <button>Jade Skills</button></br>
       </div>
       <div class="nine columns">
-        <table class="sortable u-full-width">
+        <table class="sortable u-full-width" id="withsymbolsbeforesorting">
           <thead>
             <th>Name</th>
             <th>Level</th>
