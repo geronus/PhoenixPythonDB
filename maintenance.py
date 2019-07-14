@@ -32,7 +32,7 @@ def try_key(member_id):
 
     return candidate_key
 
-# [START guild_table]
+# [START DailyMaintenance]
 class DailyMaintenance(webapp2.RequestHandler):
 
     def get(self):
@@ -49,7 +49,7 @@ class DailyMaintenance(webapp2.RequestHandler):
         result = json.loads(response.content)
         contest_additions = []
 
-        #[START UPDATE GUILD CONTRIBUTIONS]
+        #[START UPDATE GUILD MEMBERS]
 
         for member in result['members']:
             #Attempt to fetch this member from the DB
@@ -60,11 +60,17 @@ class DailyMaintenance(webapp2.RequestHandler):
             if entry is None:
                 logging.info("New member detected: " + member['username'])
 
+                #The kill_list property is a list of daily kills totals for the 30 days. We initialize it here by setting the first 29 values to 0
                 kill_tracker = []
 
                 for x in xrange(0,29):
                     kill_tracker.append(0)
 
+                #
+                # Then we set the last value to the new member's kills from yesterday.
+                # When we read this list back for the UI, we do so starting from the end, so the list is in reverse order.
+                # E.g., the first value in the list is actually the oldest, and the one at the end is the newest.
+                #
                 kill_tracker.append(int(member['kills']['kills']) - int(member['kills']['yesterdays_kills']))
 
                 infant_member = Member(id=member['id'],
@@ -167,16 +173,16 @@ class DailyMaintenance(webapp2.RequestHandler):
                     for x in xrange(0, (len(Utilities.RANKS) - 1)):
                         if entry.gdp >= Utilities.RANKS[x]:
                             new_rank = x
+                        else:
+                          break
 
                     entry.rank_int = new_rank
                     entry.rank_milestone = Utilities.RANKS[new_rank + 1]
+                    #Convert arabic rank number to roman numerals and save as a string
                     entry.rank = convertARnumbers.converts(new_rank)
 
                 #Update the database
                 entry.put()
-
-        #[END UPDATE GUILD CONTRIBUTIONS]
-        #[START UPDATE STATS]
 
         root_url = 'https://lyrania.co.uk/api/accounts/public_profile.php?'
         memberlist = []
@@ -218,10 +224,18 @@ class DailyMaintenance(webapp2.RequestHandler):
                 person.gdp_prev = person.gdp
                 person.gdp_spent_prev = person.gdp_spent
                 person.rp_prev = person.rp
+
+                #Wipe the kill tracker
+                kill_tracker = person.kill_list
+                
+                for x in xrange(0,30):
+                    kill_tracker[x] = 0
+
+                person.kill_list = kill_tracker
                 
             person.put()
 
-        #[END UPDATE STATS]
+        #[END UPDATE GUILD MEMBERS]
         #[START UPDATE CONTESTS]
 
         #Get today and also yesterday, since contests up until yesterday are relevant
@@ -274,6 +288,7 @@ class DailyMaintenance(webapp2.RequestHandler):
 
                 item.put()
         #[END Update Contests]
+#[END DailyMaintenace]
 
 # [START app]
 app = webapp2.WSGIApplication([
