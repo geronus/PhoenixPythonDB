@@ -67,7 +67,7 @@
           {% for member in data.members|sort(case_sensitive=True, attribute='username') %}
             <tr>
               <td><strong>{{ member.username }}</strong></td>
-              <td></td>
+              <td>{{ member.rank }}</td>
               <td>{{ member.gdp['dp'] }}</td>
               <td>{{ member.gdp['dp_spent'] }}</td>
               <td>{{ member.gdp['weekly_dp'] }}</td>

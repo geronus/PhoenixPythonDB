@@ -25,19 +25,6 @@ JINJA_ENVIRONMENT = jinja2.Environment(
 
 GUILD_SECRET = '1596210'
 
-RANKS = [1000,2000,3000,4000,5000,
-         7500,10000,12500,15000,20000,
-         25000,30000,35000,40000,50000,
-         60000,70000,80000,90000,100000,
-         120000,140000,160000,180000,200000,
-         220000,240000,260000,280000,300000,
-         320000,340000,360000,380000,400000,
-         420000,440000,460000,480000,500000,
-         525000,550000,575000,600000,625000,
-         650000,675000,700000,725000,750000,
-         775000,800000,825000,850000,875000,
-         900000,925000,950000,975000,1000000]
-
 # [START admin]
 
 class Admin(webapp2.RequestHandler):
@@ -49,14 +36,16 @@ class Admin(webapp2.RequestHandler):
         #Identify the slackers for future shaming
         double_list = []
         kill_tracker = []
+        rank_tracker = []
         
         for person in members:
             
+            #Identify the people with Double debt (slackers)
             if person.double < 0:
                 double_list.append(person)
 
+            #Compile the kill tracker
             kill_list = person.kill_list
-            logging.debug("Type of kill_list: " + str(type(kill_list)))
 
             kills7 = sum(kill_list[23:])
             kills14 = sum(kill_list[16:])
@@ -69,13 +58,22 @@ class Admin(webapp2.RequestHandler):
 
             kill_tracker.append(kill_dict)
 
+            #Identify who needs a new rank
+            if person.rank_new == True:
+                rank_dict = {'id': person.key.urlsafe(),
+                             'name': person.username,
+                             'gdp': person.gdp,
+                             'rank': person.rank}
+
+                rank_tracker.append(rank_dict)
+
         template = JINJA_ENVIRONMENT.get_template('admin.html')
-        self.response.write(template.render(kills=kill_tracker,double=double_list))
+        self.response.write(template.render(kills=kill_tracker,double=double_list,ranks=rank_tracker))
 
 # [END admin]
 
 # [START admin_submit]
-class Admin_Submit(webapp2.RequestHandler):
+class AdminSubmit(webapp2.RequestHandler):
 
     #For validating date input and converting it into a Python date object
     def parseDate(self, string_in):
@@ -144,6 +142,24 @@ class Admin_Submit(webapp2.RequestHandler):
                 new_contest.put()
                 result = "Contest " + new_contest.name + " successfully created!"
 
+        elif action == "updateranks":
+            updates = self.request.POST.getall('member')
+
+            for identifier in updates:
+                try:
+                    candidate_key = ndb.Key(urlsafe=identifier)
+                except:
+                    candidate_key = None
+                    logging.error("Unable to retrieve Member key from POST request! Identifier was " + str(identifier))
+                    logging.exception("Exception data:")
+
+                if candidate_key is not None:
+                    member = candidate_key.get()
+                    member.rank_new = False
+                    member.put()
+
+            result = "Rank notifications successfully updated!"
+
         else:
             logging.warning("Admin action: Unable to resolve action type!")
             result = "Error: Unknown action"
@@ -154,7 +170,7 @@ class Admin_Submit(webapp2.RequestHandler):
 
 # [START app]
 app = webapp2.WSGIApplication([
-    ('/admin/submit', Admin_Submit),
+    ('/admin/submit', AdminSubmit),
     ('/admin', Admin)
 ], debug=True)
 # [END app]

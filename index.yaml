@@ -6,6 +6,11 @@ indexes:
   - name: username
     direction: asc
 
+- kind: Member
+  properties:
+  - name: rank_new
+  - name: username
+
 - kind: Contest
   properties:
   - name: end

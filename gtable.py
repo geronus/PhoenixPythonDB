@@ -87,6 +87,7 @@ class GuildTable(webapp2.RequestHandler):
                 member['kills7'] = format(sum(entry.kill_list[23:]),',')
                 member['kills14'] = format(sum(entry.kill_list[16:]),',')
                 member['kills30'] = format(sum(entry.kill_list),',')
+                member['rank'] = entry.rank
 
             #Format for display
             member['level'] = format(int(member['level']),',')
