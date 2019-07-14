@@ -64,6 +64,7 @@ def todayGMT():
     elif tday.strftime("%m %d") > str("10 27"):timeshift = 0
     else: timeshift = 1
     tday = tday + timedelta(hours=timeshift)
+    tday = tday.date()
     #tday=tday.strftime('%Y-%m-%d')
     return tday
 
