@@ -165,13 +165,15 @@ class DailyMaintenance(webapp2.RequestHandler):
                 entry.kill_list = kill_tracker
 
                 #Update rank
-                if entry.gdp >= entry.rank_milestone:
+                gdp_total = entry.gdp + entry.gdp_prev
+
+                if gdp_total >= entry.rank_milestone:
                     entry.rank_new = True
                     new_rank = 0
 
                     #Rank corresponds to index of RANKS array in Utilities module
                     for x in xrange(0, (len(Utilities.RANKS) - 1)):
-                        if entry.gdp >= Utilities.RANKS[x]:
+                        if gdp_total >= Utilities.RANKS[x]:
                             new_rank = x
                         else:
                           break
