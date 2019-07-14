@@ -59,7 +59,7 @@ class ContestPublic(webapp2.RequestHandler):
 
             contest.put()
 
-        today = datetime.date.today()
+        today = Utilities.todayGMT()
 
         #Refresh active query to get updated score values
         active = Contest.query(Contest.active == True).order(Contest.end).fetch()
