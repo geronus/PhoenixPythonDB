@@ -31,12 +31,14 @@ class Admin(webapp2.RequestHandler):
 
     def get(self):
 
+        #Get the member list for the kill tracker, double tracker and ranking system
         members = Member.query(Member.active == True).order(Member.username)
 
         #Identify the slackers for future shaming
         double_list = []
         kill_tracker = []
         rank_tracker = []
+        contests = []
         
         for person in members:
             
@@ -67,8 +69,17 @@ class Admin(webapp2.RequestHandler):
 
                 rank_tracker.append(rank_dict)
 
+        #Get contests for deletion
+        query_result = Contest.query().order(-Contest.end).fetch()
+
+        for item in query_result:
+            contest_dict = {'id': item.key.urlsafe(),
+                            'name': item.name}
+
+            contests.append(contest_dict)
+
         template = JINJA_ENVIRONMENT.get_template('admin.html')
-        self.response.write(template.render(kills=kill_tracker,double=double_list,ranks=rank_tracker))
+        self.response.write(template.render(kills=kill_tracker,double=double_list,ranks=rank_tracker,contests=contests))
 
 # [END admin]
 
@@ -159,6 +170,22 @@ class AdminSubmit(webapp2.RequestHandler):
                     member.put()
 
             result = "Rank notifications successfully updated!"
+
+        elif action == "deletecontest":
+            contests_to_delete = self.request.POST.getall('contestdelete')
+
+            for identifier in contests_to_delete:
+                try:
+                    candidate_key = ndb.Key(urlsafe=identifier)
+                except:
+                    candidate_key = None
+                    logging.error("Unable to retrieve Contest key from POST request! Identifier was " + str(identifier))
+                    logging.exception("Exception data:")
+
+                if candidate_key is not None:
+                    candidate_key.delete()
+            
+            result = "Contests successfully updated!"
 
         else:
             logging.warning("Admin action: Unable to resolve action type!")

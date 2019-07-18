@@ -111,6 +111,24 @@
           </div>
           <button class="button-primary" type="submit" name="action" value="newcontest">Submit</button>
         </form>
+        <h2>Delete Contest</h2>
+        {% if contests %}
+        <form action="https://phoenixdb-222701.appspot.com/admin/submit" method="post">
+          <table>
+            <thead>
+              <th>Contest</th>
+              <th>Delete</th>
+            </thead>
+            {% for contest in contests %}
+            <tr>
+              <td>{{ contest.name }}</td>
+              <td><input type="checkbox" name="contestdelete" value={{ contest.id }}></td>
+            </tr>
+            {% endfor %}
+          </table>
+          <button class="button-primary" type="submit" name="action" value="deletecontest">Submit</button>
+        </form>
+        {% endif %}
       </div>
     </div>
   </div>

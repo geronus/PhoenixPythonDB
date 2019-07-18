@@ -215,17 +215,17 @@ class DailyMaintenance(webapp2.RequestHandler):
             if result['guild_name'] != 'Phoenix':
                 logging.info("Member no longer in guild: " + person.username)
                 person.active = False
-                person.xp_prev = person.xp
-                person.money_prev = person.money
-                person.jade_prev = person.jade
-                person.gems_prev = person.gems
-                person.food_prev = person.food
-                person.iron_prev = person.iron
-                person.stone_prev = person.stone
-                person.lumber_prev = person.lumber
-                person.gdp_prev = person.gdp
-                person.gdp_spent_prev = person.gdp_spent
-                person.rp_prev = person.rp
+                person.xp_prev = person.xp + person.xp_prev
+                person.money_prev = person.money + person.money_prev
+                person.jade_prev = person.jade + person.jade_prev
+                person.gems_prev = person.gems + person.gems_prev
+                person.food_prev = person.food + person.food_prev
+                person.iron_prev = person.iron + person.iron_prev
+                person.stone_prev = person.stone + person.stone_prev
+                person.lumber_prev = person.lumber + person.lumber_prev
+                person.gdp_prev = person.gdp + person.gdp_prev
+                person.gdp_spent_prev = person.gdp_spent + person.gdp_spent_prev
+                person.rp_prev = person.rp + person.rp_prev
 
                 #Wipe the kill tracker
                 kill_tracker = person.kill_list
