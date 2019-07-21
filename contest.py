@@ -78,7 +78,7 @@ class ContestPublic(webapp2.RequestHandler):
                 candidate_key = ndb.Key(urlsafe=query)
             except:
                 candidate_key = None
-                debug.error("Unable to retrieve Contest key from GET request!")
+                logging.error("Unable to retrieve Contest key from GET request!")
         else:
             candidate_key = None
 
@@ -135,9 +135,69 @@ class ContestPublic(webapp2.RequestHandler):
 
 # [END contest_table]
 
+# [START contest_archive]
+
+class ContestArchive(webapp2.RequestHandler):
+
+    def get(self):
+        
+        today = Utilities.todayGMT()
+
+        #Get all finished contests
+        old_contests = Contest.query(Contest.end < today).order(-Contest.end).fetch()
+
+        #Check if a contest has been selected
+        query = self.request.get('id')
+        
+        if query != '':
+            try:
+                candidate_key = ndb.Key(urlsafe=query)
+            except:
+                candidate_key = None
+                logging.error("Unable to retrieve Contest key from GET request!")
+                logging.exception("Exception data:")
+        else:
+            candidate_key = None
+
+        #If no contest was selected, determine which contest should be the default
+        if candidate_key is not None:
+            current = candidate_key.get()
+        elif len(old_contests) > 0:
+            current = old_contests[0]
+        else:
+            current = None
+
+        #Format results for the template
+        contest_list = []
+
+        for item in old_contests:
+                
+            item_dict = {'id': item.key.urlsafe(),
+                         'name': item.name,
+                         'start': item.start.strftime('%d-%m-%Y'),
+                         'end': item.end.strftime('%d-%m-%Y')}
+
+            contest_list = contest_list + [item_dict]
+
+        if current is not None:
+
+            scores = current.scores
+
+            current_dict = {'id': current.key.urlsafe(),
+                            'name': current.name,
+                            'start': current.start.strftime('%d-%m-%Y'),
+                            'end': current.end.strftime('%d-%m-%Y')}
+
+        #Write return
+        template = JINJA_ENVIRONMENT.get_template('contest_archive.html')
+        self.response.write(template.render(contests=contest_list,
+                                            current=current_dict,
+                                            scores=scores))
+# [END contest_archive]
 
 # [START app]
 app = webapp2.WSGIApplication([
-    ('/contest', ContestPublic)
+    ('/contest', ContestPublic),
+    ('/contest_archive', ContestArchive)
 ], debug=True)
 # [END app]

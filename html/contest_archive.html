@@ -33,41 +33,23 @@
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <div class="container">
     <p>
-      <h1>Guild Mapping Contests</h1>
+      <h1>Contest Archive</h1>
     </p>
     <div class="row">
       <div class="three columns">
         <a class="button" href="https://phoenixdb-222701.appspot.com/gtable">Home</a></br>
-        <a class="button" href="https://phoenixdb-222701.appspot.com/contest_archive">Contest Archive</a>
-        <h5>Current Contests</h5>
-        {% for item in active_contests %}
-        {% if item == current %}
-        <a class="button button-primary" href={{ ["https://phoenixdb-222701.appspot.com/contest?id=", current['id']]|join }}>{{ current['name'] }}</a></br>
-        {% else %}
-        <a class="button" href={{ ["https://phoenixdb-222701.appspot.com/contest?id=", item['id']]|join }}>{{ item['name'] }}</a></br>
-        {% endif %}
-        {% endfor %}
-        <p><h5>Recent Contests</h5></p>
-        {% if recent_contests %}
+        <a class="button" href="https://phoenixdb-222701.appspot.com/contest">Contests</a></br>
+        <h5>Past Contests</h5>
+        {% if contests %}
         <ol>
-          {% for item in recent_contests %}
+          {% for item in contests %}
           {% if item == current %}
-          <a class="button button-primary" href={{ ["https://phoenixdb-222701.appspot.com/contest?id=", current['id']]|join }}>{{ current['name'] }}</a></br>
+          <a class="button button-primary" href={{ ["https://phoenixdb-222701.appspot.com/contest_archive?id=", current['id']]|join }}>{{ current['name'] }}</a></br>
           {% else %}
-          <a class="button" href={{ ["https://phoenixdb-222701.appspot.com/contest?id=", item['id']]|join }}>{{ item['name'] }}</a></br>
+          <a class="button" href={{ ["https://phoenixdb-222701.appspot.com/contest_archive?id=", item['id']]|join }}>{{ item['name'] }}</a></br>
           {% endif %}
           {% endfor %}
         </ol>
-        {% endif %}
-        <p><h5>Upcoming Contests</h5></p>
-        {% if upcoming_contests %}
-        <ol>
-          {% for item in upcoming_contests %}
-          <li>{{ [item['name'], " ", item['start']]|join }}</li>
-          {% endfor %}
-        </ol>
-        {% else %}
-        <p>None</p>
         {% endif %}
       </div>
       <div class="nine columns">
