@@ -39,9 +39,9 @@ class Admin(webapp2.RequestHandler):
         kill_tracker = []
         rank_tracker = []
         contests = []
-        
+
         for person in members:
-            
+
             #Identify the people with Double debt (slackers)
             if person.double < 0:
                 double_list.append(person)
@@ -62,9 +62,10 @@ class Admin(webapp2.RequestHandler):
 
             #Identify who needs a new rank
             if person.rank_new == True:
+                gdp_total = person.gdp + person.gdp_prev
                 rank_dict = {'id': person.key.urlsafe(),
                              'name': person.username,
-                             'gdp': person.gdp,
+                             'gdp': gdp_total,
                              'rank': person.rank}
 
                 rank_tracker.append(rank_dict)
@@ -184,7 +185,7 @@ class AdminSubmit(webapp2.RequestHandler):
 
                 if candidate_key is not None:
                     candidate_key.delete()
-            
+
             result = "Contests successfully updated!"
 
         else:
