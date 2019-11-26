@@ -88,6 +88,7 @@ class GuildTable(webapp2.RequestHandler):
                 member['kills14'] = format(sum(entry.kill_list[16:]),',')
                 member['kills30'] = format(sum(entry.kill_list),',')
                 member['rank'] = entry.rank
+                member['gdp']['dp'] = format((int(member['gdp']['dp']) + entry.gdp_prev),',')
 
             #Format for display
             member['level'] = format(int(member['level']),',')
@@ -100,7 +101,6 @@ class GuildTable(webapp2.RequestHandler):
             member['donations']['money'] = Utilities.money_external(member['donations']['money'])
             member['donations']['jade'] = format(int(member['donations']['jade']),',')
             member['donations']['double'] = format(int(member['donations']['double']),',')
-            member['gdp']['dp'] = format(int(member['gdp']['dp']),',')
             member['gdp']['dp_spent'] = format(int(member['gdp']['dp_spent']),',')
             member['gdp']['weekly_dp'] = format(int(member['gdp']['weekly_dp']),',')
             member['rp']['donated'] = format(int(member['rp']['donated']),',')

@@ -136,6 +136,11 @@ class DailyMaintenance(webapp2.RequestHandler):
 
             #Otherwise, update the existing entry
             else:
+
+                if entry.active is not True:
+                    new_addition = [member['id']]
+                    contest_additions = contest_additions + new_addition
+
                 entry.username = member['username']
                 entry.active = True
                 entry.level = int(member['level'])
@@ -280,7 +285,7 @@ class DailyMaintenance(webapp2.RequestHandler):
                     if entity is not None:
                         new_score = ContestScore(member_id=entity.key.id(),
                                                  member_name=entity.username,
-                                                 start_gdp=entity.gdp,
+                                                 start_gdp=0,
                                                  current_gdp=entity.gdp)
 
                         item.scores = item.scores + [new_score]
